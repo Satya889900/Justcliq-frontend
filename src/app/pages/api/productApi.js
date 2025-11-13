@@ -154,7 +154,7 @@ export const fetchProductsByCategory = async (categoryId) => {
   if (!categoryId) throw new Error("Category ID is required");
 
   
-  const res = await axios.get(`${API_BASE_URL}/admin/api/products/products/${categoryId}`, {
+  const res = await axios.get(`${API_BASE_URL}/admin/api/products/category/${categoryId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -201,7 +201,7 @@ export const addProduct = async (formData) => {
 // Edit product
 export const editProduct = async (productId, formData) => {
   
-  const res = await axios.put(`${API_BASE_URL}/admin/products/${productId}`, formData, {
+  const res = await axios.put(`${API_BASE_URL}/admin/api/products/${productId}`, formData, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data.data || res.data.product;
@@ -211,7 +211,7 @@ export const editProduct = async (productId, formData) => {
 // Delete product
 export const deleteProduct = async (productId) => {
 
-  const res = await axios.delete(`${API_BASE_URL}/admin/products/${productId}`, {
+  const res = await axios.delete(`${API_BASE_URL}/admin/api/products/${productId}`,  {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
@@ -237,7 +237,7 @@ export const fetchProductCategory = async (productId) => {
   if (!productId) throw new Error("Product ID is required");
 
   try {
-    const res = await axios.get(`${API_BASE_URL}/admin/api/products/product/${productId}/category`, {
+    const res = await axios.get(`${API_BASE_URL}/admin/api/products/${productId}/category`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

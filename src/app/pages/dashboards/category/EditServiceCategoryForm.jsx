@@ -9,7 +9,7 @@ const EditServiceCategoryForm = ({ category, onSave, onCancel }) => {
   const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [name, setName] = useState(category?.name || "");
-  const [description, setDescription] = useState(category?.description || "");
+  // const [description, setDescription] = useState(category?.description || "");
   const [newImageFile, setNewImageFile] = useState(null);
 
   const initialImage = category?.images?.length
@@ -40,7 +40,6 @@ const EditServiceCategoryForm = ({ category, onSave, onCancel }) => {
     // Joi validation
     const { error } = serviceCategorySchema.validate({
       name,
-      description,
       image: newImageFile || previewImage,
     });
 
@@ -53,7 +52,6 @@ const EditServiceCategoryForm = ({ category, onSave, onCancel }) => {
     try {
       const updatedCategory = await updateServiceCategory(category._id, {
   name,
-  description,
   newImageFile, // pass the actual File object, not preview URL
 });
       toast.success(`Service category "${updatedCategory.data.name}" updated successfully! 🎉`);
@@ -90,7 +88,7 @@ const EditServiceCategoryForm = ({ category, onSave, onCancel }) => {
         </div>
 
         {/* Description */}
-        <div className="flex flex-col gap-1">
+        {/* <div className="flex flex-col gap-1">
           <label className="text-sm font-medium text-gray-700">Description (optional)</label>
           <textarea
             placeholder="Optional description"
@@ -99,7 +97,7 @@ const EditServiceCategoryForm = ({ category, onSave, onCancel }) => {
             rows={3}
             className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-y transition-all"
           />
-        </div>
+        </div> */}
 
         {/* Image Upload */}
         <div className="flex flex-col gap-1">

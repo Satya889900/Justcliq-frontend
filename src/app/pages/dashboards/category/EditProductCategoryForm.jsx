@@ -3,14 +3,14 @@ import { useState } from "react";
 import { FaBox, FaSave, FaSpinner, FaTimes } from "react-icons/fa";
 import { MdCloudUpload } from "react-icons/md";
 import toast from "react-hot-toast"; // ✅ toast
-import { updateProductCategory,editCategorySchema  } from "../../api/categoryApi";
+import { updateProductCategory } from "../../api/categoryApi";
 
 
 const backendUrl = import.meta.env.VITE_API_BASE_URL;
 
 const EditProductCategoryForm = ({ category, onSave, onCancel }) => {
   const [name, setName] = useState(category?.name || "");
-  const [description, setDescription] = useState(category?.description || "");
+  // const [description, setDescription] = useState(category?.description || "");
   const [newImageFile, setNewImageFile] = useState(null);
 
   const initialImages = category?.images?.length
@@ -35,13 +35,10 @@ const EditProductCategoryForm = ({ category, onSave, onCancel }) => {
     setIsSubmitting(true);
 
     try {
-      // ✅ Frontend validation
-      const { error } = editCategorySchema.validate({ name, description });
-      if (error) throw new Error(error.details.map((d) => d.message).join(", "));
 
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("description", description || "");
+      // formData.append("description", description || "");
 
       if (newImageFile) formData.append("image", newImageFile);
 
@@ -101,7 +98,7 @@ onCancel();
         </div>
 
         {/* Description */}
-        <div className="flex flex-col gap-1">
+        {/* <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">Description (optional)</label>
           <textarea
             placeholder="Optional description"
@@ -110,7 +107,7 @@ onCancel();
             rows={3}
             className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 focus:border-green-500 focus:ring-1 focus:ring-green-500 resize-y transition-all"
           />
-        </div>
+        </div> */}
 
         {/* Image Upload */}
         <div className="flex flex-col gap-1">
