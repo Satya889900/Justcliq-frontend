@@ -186,7 +186,7 @@ export const fetchProductCategories = async () => {
 // ------------------------------
 export const addProduct = async (formData) => {
   
-  const res = await axios.post(`${API_BASE_URL}/admin/api/products/products`, formData, {
+  const res = await axios.post(`${API_BASE_URL}/admin/api/products`, formData, {
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
   });
   return res.data.data;
