@@ -32,7 +32,7 @@ export const vendorActionSchema = Joi.object({
 });
 
 export const fetchVendors = async () => {
-  const { data } = await axios.get(`${API_BASE_URL}/admin/productVendor/vendors`, {
+  const { data } = await axios.get(`${API_BASE_URL}/admin/api/productVendor/vendors`, {
     headers: getAuthHeaders(),
   });
   if (!data.success) throw new Error(data.message || "Failed to fetch vendors");
@@ -42,7 +42,7 @@ export const fetchVendors = async () => {
 export const updateVendorAction = async (id, action, reason) => {
   const payload = { action, reason };
   const { data } = await axios.post(
-    `${API_BASE_URL}/admin/productVendor/action/${id}`,
+    `${API_BASE_URL}/admin/api/productVendor/action/${id}`,
     payload,
     { headers: getAuthHeaders() }
   );

@@ -215,7 +215,7 @@ const ManageStockPage = () => {
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50"
         >
-          Open Manage Stock Form
+          Open Stock Form
         </button>
       </div>
       <ManageStockModal

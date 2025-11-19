@@ -19,15 +19,15 @@ const protectedRoutes = {
         {
           path: "dashboards",
           children: [
-           
-             {
+            {
               path: "services/:categoryId",
-      lazy: async () => ({
-        Component: (await import("app/pages/dashboards/services/ServicesPage")).default,
-        
-      }),
+              lazy: async () => ({
+                Component: (
+                  await import("app/pages/dashboards/services/ServicesPage")
+                ).default,
+              }),
             },
-             {
+            {
               path: "products/:categoryId",
               lazy: async () => ({
                 Component: (
@@ -49,19 +49,18 @@ const protectedRoutes = {
         },
       ],
     },
-      // ✅ Dedicated Profile route
-//   {
-//   Component: AppLayout,
-//   children: [
-//     {
-//       path: "profile",  // accessible at /profile
-//       lazy: async () => ({
-//         Component: (await import("app/layouts/MainLayout/Profile")).default,
-//       }),
-//     },
-//   ],
-// },
-
+    // ✅ Dedicated Profile route
+    //   {
+    //   Component: AppLayout,
+    //   children: [
+    //     {
+    //       path: "profile",  // accessible at /profile
+    //       lazy: async () => ({
+    //         Component: (await import("app/layouts/MainLayout/Profile")).default,
+    //       }),
+    //     },
+    //   ],
+    // },
 
     // {
     //   Component: AppLayout,
@@ -104,7 +103,7 @@ const protectedRoutes = {
     //     },
     //   ],
     // },
-     {
+    {
       Component: AppLayout,
       children: [
         {
@@ -120,9 +119,8 @@ const protectedRoutes = {
             {
               path: "general",
               lazy: async () => ({
-                Component: (
-                  await import("app/pages/settings/sections/General")
-                ).default,
+                Component: (await import("app/pages/settings/sections/General"))
+                  .default,
               }),
             },
             // {
@@ -140,30 +138,34 @@ const protectedRoutes = {
       ],
     },
     {
-  Component: AppLayout,
-  children: [
-    {
-      path: "services",
-        Component: (await import("app/pages/services/Layout")).default,
-
+      Component: AppLayout,
       children: [
         {
-          path: "orders",
-          lazy: async () => ({
-            Component: (await import("app/pages/services/orders/ServiceOrders")).default,
-          }),
-        },
-        {
-          path: "list",
-          lazy: async () => ({
-            Component: (await import("app/pages/services/list/ServiceProviders")).default,
-          }),
+          path: "services",
+          Component: (await import("app/pages/services/Layout")).default,
+
+          children: [
+            {
+              path: "orders",
+              lazy: async () => ({
+                Component: (
+                  await import("app/pages/services/orders/ServiceOrders")
+                ).default,
+              }),
+            },
+            {
+              path: "list",
+              lazy: async () => ({
+                Component: (
+                  await import("app/pages/services/list/ServiceProviders")
+                ).default,
+              }),
+            },
+          ],
         },
       ],
     },
-  ],
-},
- // ✅ Products layout routes (NEW)
+    // ✅ Products layout routes (NEW)
     {
       Component: AppLayout,
       children: [
@@ -189,27 +191,29 @@ const protectedRoutes = {
             },
           ],
         },
-         // ✅ Add stock management routes (NEW)
+        // ✅ Add stock management routes (NEW)
         {
           path: "stock-management",
           lazy: async () => ({
             Component: (await import("app/pages/stock/Layout")).default,
           }),
           children: [
-              
-    {
-      path: "stock",
-      lazy: async () => ({
-        Component: (await import("app/pages/stock/stock/StockManagement")).default,
-      }),
-    },
-    {
-      path: "stock/:categoryId",
-      lazy: async () => ({
-        Component: (await import("app/pages/stock/StockManagementThings")).default,
-      }),
-    },
-          
+            {
+              path: "stock",
+              lazy: async () => ({
+                Component: (
+                  await import("app/pages/stock/stock/StockManagement")
+                ).default,
+              }),
+            },
+            {
+              path: "stock/:categoryId",
+              lazy: async () => ({
+                Component: (
+                  await import("app/pages/stock/StockManagementThings")
+                ).default,
+              }),
+            },
           ],
         },
       ],

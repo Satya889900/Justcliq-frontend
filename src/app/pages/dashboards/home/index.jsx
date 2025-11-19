@@ -1,7 +1,14 @@
 /* home/index.jsx */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { WrenchScrewdriverIcon, CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { 
+  WrenchScrewdriverIcon, 
+  CubeIcon, 
+  PlusIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+} from "@heroicons/react/24/outline";
+// import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { MdMiscellaneousServices, MdProductionQuantityLimits } from "react-icons/md";
 import { toast } from "react-hot-toast";
 
@@ -40,8 +47,7 @@ const Home = () => {
   const [editItem, setEditItem] = useState(null);
   const [deleteItem, setDeleteItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoriesMap, setCategoriesMap] = useState({}); // id -> category
-
+  const [categoriesMap, setCategoriesMap] = useState({});
 
   const navigate = useNavigate();
 
@@ -49,12 +55,12 @@ const Home = () => {
     setLoading(true);
     try {
       const cats = await fetchCategoriesApi(activeTab);
-      // Build map: categoryId -> category
-    const catMap = {};
-    cats.forEach(cat => {
-      catMap[cat._id] = cat;
-    });
-    setCategoriesMap(catMap);
+      const catMap = {};
+      cats.forEach(cat => {
+        catMap[cat._id] = cat;
+      });
+      setCategoriesMap(catMap);
+      
       const catsWithSubItems = await Promise.all(
         cats.map(async (cat) => {
           const subItems =
@@ -87,8 +93,8 @@ const Home = () => {
   };
   const handleCategoryDelete = (cat) => setDeleteCategory(cat);
 
-  const handleItemEdit = (item,parentCat) => {
-    setEditItem({ ...item, parentCategory: parentCat ,categoryId: parentCat?._id || item.categoryId });
+  const handleItemEdit = (item, parentCat) => {
+    setEditItem({ ...item, parentCategory: parentCat, categoryId: parentCat?._id || item.categoryId });
     setIsModalOpen(true);
   };
   const handleItemDelete = (item) => setDeleteItem(item);
@@ -118,88 +124,177 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="p-4 sm:p-6 md:p-10 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-blue-100/60">
-      <div className="max-w-7xl mx-auto">
-        {/* Header with Back button */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
-          {/* <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-1 text-gray-600 hover:text-gray-800 mb-2 sm:mb-0"
-          >
-            <ArrowLeftIcon className="h-5 w-5" />
-            Back
-          </button> */}
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center gap-2">
-            {activeTab === "services" ? (
-              <WrenchScrewdriverIcon className="h-7 w-7 text-blue-600" />
-            ) : (
-              <CubeIcon className="h-7 w-7 text-green-600" />
-            )}
-            All {activeTab === "services" ? "Services" : "Products"}
-          </h1>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`Search ${activeTab === "services" ? "services" : "products"}...`}
-              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition w-full sm:w-64"
-            />
-            <button
-              onClick={() => {
-                setEditCategory(null);
-                setEditItem(null);
-                setIsModalOpen(true);
-              }}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-md hover:from-blue-600 hover:to-blue-800 transition-all"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Add {activeTab === "services" ? "Service" : "Product"}
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/30">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-r from-blue-200 to-purple-200 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-r from-green-200 to-blue-200 rounded-full blur-3xl opacity-20 animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        {/* Top Navigation Bar */}
+        <div className="mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            {/* Left Section - Title */}
+            <div className="flex items-center gap-3">
+              <div className={`p-3 rounded-xl ${
+                activeTab === "services" 
+                  ? "bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-200/50" 
+                  : "bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-200/50"
+              } shadow-md backdrop-blur-sm`}>
+                {activeTab === "services" ? (
+                  <WrenchScrewdriverIcon className="h-5 w-5 text-blue-600" />
+                ) : (
+                  <CubeIcon className="h-5 w-5 text-green-600" />
+                )}
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  {activeTab === "services" ? "Services" : "Products"}
+                </h1>
+                <p className="text-xs text-gray-600">
+                  Manage your {activeTab} categories
+                </p>
+              </div>
+            </div>
+
+            {/* Right Section - Search and Add Button */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              {/* Search Bar */}
+              <div className="relative flex-1 min-w-[240px]">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-lg blur-sm"></div>
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={`Search ${activeTab}...`}
+                    className="w-full pl-9 pr-9 py-2 bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 placeholder-gray-400 text-xs hover:shadow focus:shadow-md"
+                  />
+                  <button className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors duration-200">
+                    <FunnelIcon className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Add Category Button */}
+              <button
+                onClick={() => {
+                  setEditCategory(null);
+                  setEditItem(null);
+                  setIsModalOpen(true);
+                }}
+                className="group relative inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 hover:from-blue-700 hover:to-indigo-800 min-w-[120px] overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                <PlusIcon className="h-3 w-3 relative z-10" />
+                <span className="relative z-10">Add Category</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex overflow-x-auto border-b border-gray-200 mb-6 scrollbar-thin scrollbar-thumb-gray-300">
-          {[
-            { key: "services", icon: <WrenchScrewdriverIcon className="h-5 w-5" /> },
-            { key: "products", icon: <CubeIcon className="h-5 w-5" /> },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium transition whitespace-nowrap ${
-                activeTab === tab.key
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {tab.icon}
-              {tab.key.charAt(0).toUpperCase() + tab.key.slice(1)}
-            </button>
-          ))}
+        {/* Tabs and Stats Bar */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Tabs */}
+            <div className="flex gap-2">
+              {[
+                { 
+                  key: "services", 
+                  icon: <WrenchScrewdriverIcon className="h-4 w-4" />,
+                  label: "Services",
+                  gradient: "from-blue-500 to-blue-600",
+                },
+                { 
+                  key: "products", 
+                  icon: <CubeIcon className="h-4 w-4" />,
+                  label: "Products",
+                  gradient: "from-green-500 to-green-600",
+                },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`group flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 ${
+                    activeTab === tab.key
+                      ? `text-white bg-gradient-to-r ${tab.gradient} shadow-md`
+                      : "text-gray-600 bg-white/80 backdrop-blur-sm border border-gray-200/60 hover:bg-white hover:text-gray-900 hover:shadow-sm"
+                  }`}x
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Stats */}
+            <div className="flex items-center gap-4">
+              {searchQuery && (
+                <div className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                  <span>Search:</span>
+                  <span className="font-medium">&quot;{searchQuery}&quot;</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Main Grid */}
+        {/* Content Grid */}
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <Spinner size="large" color="primary" />
+          <div className="flex justify-center items-center py-16">
+            <div className="text-center">
+              <div className="relative">
+                <Spinner size="medium" color="primary" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-lg"></div>
+              </div>
+              <p className="mt-3 text-sm text-gray-600 font-medium">
+                Loading your {activeTab}...
+              </p>
+            </div>
           </div>
         ) : displayItems.length === 0 ? (
-          <div className="text-center text-gray-500 py-12 flex flex-col items-center gap-3">
-            <CubeIcon className="h-10 w-10 text-gray-400" />
-            No {activeTab} found{searchQuery && ` for "${searchQuery}"`}
+          <div className="text-center py-12 bg-white/60 backdrop-blur-sm rounded-xl border border-dashed border-gray-300/60 shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="max-w-sm mx-auto">
+              <div className={`p-3 rounded-xl inline-flex mb-3 bg-gradient-to-br ${
+                activeTab === "services" 
+                  ? "from-blue-100 to-blue-200 text-blue-600" 
+                  : "from-green-100 to-green-200 text-green-600"
+              } shadow-sm`}>
+                {activeTab === "services" ? (
+                  <WrenchScrewdriverIcon className="h-8 w-8" />
+                ) : (
+                  <CubeIcon className="h-8 w-8" />
+                )}
+              </div>
+              <h3 className="text-base font-semibold text-gray-900 mb-1">
+                No {activeTab} found
+              </h3>
+              <p className="text-gray-600 mb-4 text-xs">
+                {searchQuery ? `No results found for &quot;${searchQuery}&quot;` : `Start by creating your first ${activeTab.slice(0, -1)} category`}
+              </p>
+              {!searchQuery && (
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="group inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <PlusIcon className="h-3 w-3" />
+                  Create First Category
+                </button>
+              )}
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
             {displayItems.map((itemBlock) => {
               if (itemBlock.type === "category") {
                 const cat = itemBlock.data[0];
                 const imageUrl = cat.image?.startsWith("http")
-  ? cat.image
-  : cat.image
-    ? `${API_BASE_URL}/${cat.image.replace(/^\/+/, "").replaceAll("\\", "/")}`
-    : null; // fallback
+                  ? cat.image
+                  : cat.image
+                    ? `${API_BASE_URL}/${cat.image.replace(/^\/+/, "").replaceAll("\\", "/")}`
+                    : null;
 
                 return activeTab === "services" ? (
                   <ServiceCategoryCard
@@ -208,8 +303,7 @@ const Home = () => {
                     user={cat.name}
                     role={cat.description}
                     imageUrl={imageUrl}
-                    defaultIcon={<MdMiscellaneousServices className="text-4xl text-blue-500" />}
-                    description={cat.description || "Service Category"}
+                    defaultIcon={<MdMiscellaneousServices className="text-2xl text-blue-500" />}
                     onClick={() => handleCategoryClick(cat)}
                     onEdit={() => handleCategoryEdit(cat)}
                     onDelete={() => handleCategoryDelete(cat)}
@@ -221,8 +315,7 @@ const Home = () => {
                     user={cat.name}
                     role={cat.description}
                     imageUrl={imageUrl}
-                    defaultIcon={<MdProductionQuantityLimits className="text-4xl text-green-500" />}
-                    description={cat.description || "Product Category"}
+                    defaultIcon={<MdProductionQuantityLimits className="text-2xl text-green-500" />}
                     onClick={() => handleCategoryClick(cat)}
                     onEdit={() => handleCategoryEdit(cat)}
                     onDelete={() => handleCategoryDelete(cat)}
@@ -230,38 +323,36 @@ const Home = () => {
                 );
               }
 
-             if (itemBlock.type === "subItems") {
-  return itemBlock.data.map((sub) => {
-   const categoryName =
-  activeTab === "services"
-    ? categoriesMap[sub.categoryId]?.name || "Unknown Category"
-    : sub.category?.name || "Unknown Category";
+              if (itemBlock.type === "subItems") {
+                return itemBlock.data.map((sub) => {
+                  const categoryName =
+                    activeTab === "services"
+                      ? categoriesMap[sub.categoryId]?.name || "Unknown Category"
+                      : sub.category?.name || "Unknown Category";
 
-
-    return activeTab === "services" ? (
-      <ServiceCard
-        key={sub._id}
-        service={sub}
-        apiBaseUrl={API_BASE_URL}
-        categoryName={categoryName}
-        onClick={() => navigate(`/dashboards/services/${sub.categoryId}`)}
-        onEdit={() => handleItemEdit(sub)}
-        onDelete={() => handleItemDelete(sub)}
-      />
-    ) : (
-      <ProductCard
-        key={sub._id}
-        product={sub}
-        apiBaseUrl={API_BASE_URL}
-        categoryName={categoryName}
-        onClick={() => navigate(`/dashboards/products/${sub.categoryId}`)}
-        onEdit={() => handleItemEdit(sub, itemBlock.parent)}
-        onDelete={() => handleItemDelete(sub)}
-      />
-    );
-  });
-}
-
+                  return activeTab === "services" ? (
+                    <ServiceCard
+                      key={sub._id}
+                      service={sub}
+                      apiBaseUrl={API_BASE_URL}
+                      categoryName={categoryName}
+                      onClick={() => navigate(`/dashboards/services/${sub.categoryId}`)}
+                      onEdit={() => handleItemEdit(sub)}
+                      onDelete={() => handleItemDelete(sub)}
+                    />
+                  ) : (
+                    <ProductCard
+                      key={sub._id}
+                      product={sub}
+                      apiBaseUrl={API_BASE_URL}
+                      categoryName={categoryName}
+                      onClick={() => navigate(`/dashboards/products/${sub.categoryId}`)}
+                      onEdit={() => handleItemEdit(sub, itemBlock.parent)}
+                      onDelete={() => handleItemDelete(sub)}
+                    />
+                  );
+                });
+              }
 
               return null;
             })}
@@ -276,14 +367,14 @@ const Home = () => {
           activeTab === "services" ? (
             <EditServiceCategoryForm
               category={editCategory}
-              parentCategory={editItem?.parentCategory} //
+              parentCategory={editItem?.parentCategory}
               onSave={refreshCategories}
               onCancel={() => setIsModalOpen(false)}
             />
           ) : (
             <EditProductCategoryForm
               category={editCategory}
-              parentCategory={editItem?.parentCategory} // ✅ pass parent category
+              parentCategory={editItem?.parentCategory}
               onSave={refreshCategories}
               onCancel={() => setIsModalOpen(false)}
             />
@@ -292,7 +383,7 @@ const Home = () => {
           activeTab === "services" ? (
             <EditServiceForm
               serviceData={editItem}
-               categoryId={editItem.parentCategory?._id || editItem.categoryId} // pass categoryId explicitly
+              categoryId={editItem.parentCategory?._id || editItem.categoryId}
               onClose={() => setIsModalOpen(false)}
               onServiceUpdated={refreshCategories}
             />
@@ -311,7 +402,7 @@ const Home = () => {
         )}
       </Modal>
 
-      {/* Delete Modal */}
+      {/* Delete Modals */}
       {deleteCategory &&
         (activeTab === "services" ? (
           <ServiceCategoryDeleteForm
@@ -341,7 +432,6 @@ const Home = () => {
             service={deleteItem}
             onCancel={() => setDeleteItem(null)}
             onDelete={async () => {
-              // call API to delete
               await refreshCategories();
               toast.success(`Service "${deleteItem.name}" deleted ✅`);
             }}
@@ -351,7 +441,6 @@ const Home = () => {
             product={deleteItem}
             onCancel={() => setDeleteItem(null)}
             onDelete={async () => {
-              // call API to delete
               await refreshCategories();
               toast.success(`Product "${deleteItem.name}" deleted ✅`);
             }}

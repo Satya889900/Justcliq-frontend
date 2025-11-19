@@ -83,6 +83,7 @@ const Card = ({
 
       {/* Edit & Delete buttons */}
       <div className="flex gap-3 w-full justify-center flex-wrap mt-auto mb-2">
+
         <button
           onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
           className="flex-1 min-w-[65px] flex items-center justify-center gap-2 px-3 py-2 text-xs sm:text-sm md:text-base font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors"
@@ -96,6 +97,7 @@ const Card = ({
           <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" /> Delete
         </button>
       </div>
+
     </div>
   );
 };

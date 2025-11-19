@@ -14,8 +14,7 @@ import router from "app/router/router";
 
 function App() {
   return (
-  
-      <AuthProvider>
+    <AuthProvider>
       <ThemeProvider>
         <LocaleProvider>
           <BreakpointProvider>
@@ -28,7 +27,6 @@ function App() {
         </LocaleProvider>
       </ThemeProvider>
     </AuthProvider>
-    
   );
 }
 

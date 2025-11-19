@@ -1,142 +1,109 @@
 /* ProductCard.jsx - Styled like ServiceCard.jsx */
 
-import { Pencil, Trash2, MoreHorizontal } from "lucide-react";
-import { FaRupeeSign,FaBoxOpen } from "react-icons/fa";
+import { Pencil, Trash2 } from "lucide-react";
+import { FaRupeeSign, FaBoxOpen } from "react-icons/fa";
 
-const ProductCard = ({
-  product,
-  apiBaseUrl,
-  onClick,
-  onEdit,
-  onDelete,
-  onMoreOptionsClick,
-}) => {
-  // const defaultImage = "https://via.placeholder.com/150";
-
+const ProductCard = ({ product, apiBaseUrl, onClick, onEdit, onDelete }) => {
   const getImageSrc = (url) => {
-     if (!url || url.trim() === "") return null; 
+    if (!url || url.trim() === "") return null;
     if (url.startsWith("http")) return url;
     const cleanedUrl = url.replaceAll("\\", "/").replace(/^\/+/, "");
     return `${apiBaseUrl.replace(/\/$/, "")}/${cleanedUrl}`;
   };
 
   // Use first image or default
-  const imgSrc = product.images && product.images.length > 0
-    ? getImageSrc(product.images[0])
-    : getImageSrc(product.image);
+  const imgSrc =
+    product.images && product.images.length > 0
+      ? getImageSrc(product.images[0])
+      : getImageSrc(product.image);
 
   // Default description if missing
   const description = product.description || `${product.name} details`;
 
   return (
     <div
-      className="relative flex flex-col
-                 bg-gradient-to-tr from-white to-blue-50
-                 rounded-2xl border border-gray-200
-                 p-4 sm:p-5 md:p-6
-                 cursor-pointer
-                 w-full max-w-xs mx-auto
-                 transition-all duration-200
-                 hover:shadow-lg"
+      className="relative flex h-full cursor-pointer flex-col items-center rounded-2xl border border-gray-200 bg-gradient-to-tr from-white to-blue-50 p-4 shadow-md transition-all duration-300 hover:shadow-lg"
       onClick={onClick}
     >
-      {/* More options */}
-      {onMoreOptionsClick && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoreOptionsClick();
-          }}
-          className="absolute top-2 right-2 p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-        >
-          <MoreHorizontal className="h-5 w-5 text-gray-600" />
-        </button>
-      )}
+      {/* Image / Icon */}
+      {/* Image / Icon */}
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-blue-400 bg-gray-100 sm:h-24 sm:w-24 md:h-28 md:w-28">
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            onError={(e) => {
+              // Hide broken image and show icon
+              e.currentTarget.style.display = "none";
+              e.currentTarget.parentNode.querySelector(
+                ".fallback-icon",
+              ).style.display = "block";
+            }}
+          />
+        ) : null}
 
- {/* Image / Icon */}
-   {/* Image / Icon */}
-<div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-blue-400 mb-4 mx-auto flex items-center justify-center bg-gray-100">
-  {imgSrc ? (
-    <img
-      src={imgSrc}
-      alt={product.name}
-      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-      onError={(e) => {
-        // Hide broken image and show icon
-        e.currentTarget.style.display = "none";
-        e.currentTarget.parentNode.querySelector('.fallback-icon').style.display = "block";
-      }}
-    />
-  ) : null}
-
-  {/* Fallback Icon */}
-  <FaBoxOpen className="fallback-icon text-4xl sm:text-5xl md:text-6xl text-blue-500" style={{ display: imgSrc ? "none" : "block" }} />
-</div>
-
-
+        {/* Fallback Icon */}
+        <FaBoxOpen
+          className="fallback-icon text-4xl text-blue-500 sm:text-5xl md:text-6xl"
+          style={{ display: imgSrc ? "none" : "block" }}
+        />
+      </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 w-full items-center text-center">
+      <div className="flex w-full flex-1 flex-col items-center text-center">
         {/* Name */}
-        <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 break-words justify-text text-center mb-1">
+        <h2 className="justify-text mb-1 text-center text-sm font-bold break-words text-gray-800 sm:text-base md:text-lg">
           {product.name}
         </h2>
 
         {/* Description */}
-        <p className="text-xs sm:text-sm justify-text md:text-base text-gray-600 break-words text-center mb-3">
+        <p className="justify-text mb-3 text-center text-xs break-words text-gray-600 sm:text-sm md:text-base">
           {description}
         </p>
 
         {/* Cost & Actions pushed to bottom */}
         <div className="mt-auto w-full">
-
           {/* Unit & Quantity/Weight/Volume */}
-<div className="flex items-center justify-center gap-2 text-gray-700 text-xs sm:text-sm md:text-base w-full max-w-[160px] mx-auto mb-3 px-2 py-1 rounded-full bg-gray-100">
-  {product?.unit === "quantity" && (
-    <span>Qty: {product?.quantity ?? 0}</span>
-  )}
-  {product?.unit === "kg" && (
-    <span>Weight: {product?.weight ?? 0} kg</span>
-  )}
-  {product?.unit === "liters" && (
-    <span>Volume: {product?.volume ?? 0} L</span>
-  )}
-</div>
+          <div className="mx-auto mb-3 flex w-full max-w-[160px] items-center justify-center gap-2 rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 sm:text-sm md:text-base">
+            {product?.unit === "quantity" && (
+              <span>Qty: {product?.quantity ?? 0}</span>
+            )}
+            {product?.unit === "kg" && (
+              <span>Weight: {product?.weight ?? 0} kg</span>
+            )}
+            {product?.unit === "liters" && (
+              <span>Volume: {product?.volume ?? 0} L</span>
+            )}
+          </div>
 
           {/* Cost */}
-          <div className="flex items-center justify-center gap-1 text-gray-800 font-semibold px-3 py-1 rounded-full text-sm sm:text-base w-full max-w-[140px] mx-auto mb-3">
+          <div className="mx-auto mb-3 flex w-full max-w-[140px] items-center justify-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-gray-800 sm:text-base">
             <FaRupeeSign className="text-green-600" />
             <span>{product.cost ?? 0}</span>
           </div>
 
           {/* Buttons */}
-        {/* Buttons */}
-<div className="flex gap-3 w-full justify-center flex-wrap mt-auto mb-2">
-  <button
-    onClick={(e) => { e.stopPropagation(); onEdit?.(product); }}
-    className="flex-1 min-w-[46px] flex items-center justify-center gap-2 
-               px-2 sm:px-3 md:px-3 
-               py-1.5 sm:py-2 md:py-2 
-               text-xs sm:text-sm md:text-base 
-               font-medium text-white bg-yellow-500 
-               rounded-lg hover:bg-yellow-600 transition-colors"
-  >
-    <Pencil className="h-4 w-4 sm:h-5 sm:w-5" /> Edit
-  </button>
-
-  <button
-    onClick={(e) => { e.stopPropagation(); onDelete?.(product); }}
-    className="flex-1 min-w-[46px] flex items-center justify-center gap-2 
-               px-2 sm:px-3 md:px-3 
-               py-1.5 sm:py-2 md:py-2 
-               text-xs sm:text-sm md:text-base 
-               font-medium text-white bg-red-500 
-               rounded-lg hover:bg-red-600 transition-colors"
-  >
-    <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" /> Delete
-  </button>
-</div>
-
+          <div className="mt-4 flex w-full flex-wrap justify-center gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.(product);
+              }}
+              className="flex min-w-[65px] flex-1 items-center justify-center gap-2 rounded-lg bg-yellow-500 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-yellow-600"
+            >
+              <Pencil className="h-4 w-4" /> Edit
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.(product);
+              }}
+              className="flex min-w-[65px] flex-1 items-center justify-center gap-2 rounded-lg bg-red-500 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-red-600"
+            >
+              <Trash2 className="h-4 w-4" /> Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>

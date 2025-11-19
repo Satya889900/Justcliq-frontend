@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FiPlus, FiArrowLeft } from "react-icons/fi";
+import { FiPlus, FiArrowLeft, } from "react-icons/fi";
 import { MdOutlineElectricalServices } from "react-icons/md";
 
 import ProductCard from "./ProductCard";
@@ -101,36 +101,40 @@ const ProductsPage = () => {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-10 bg-gray-50 min-h-screen font-sans">
-      {/* Header with Back button */}
-     {/* Header with Back button */}
-<header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-  {/* Title */}
-  <div className="flex items-center gap-3 w-full sm:w-auto">
-    <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 flex items-center gap-2 truncate">
-      <MdOutlineElectricalServices className="text-blue-600 h-8 w-8 sm:h-10 sm:w-10" />
-      {category?.name || "Products"}
-    </h1>
-  </div>
+      <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+        {/* Left Section - Title */}
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-200/50 shadow-md backdrop-blur-sm">
+            <MdOutlineElectricalServices className="h-6 w-6 text-green-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 capitalize">
+              {category?.name || "Products"}
+            </h1>
+            <p className="text-xs text-gray-600">
+              Manage products in this category
+            </p>
+          </div>
+        </div>
 
-  {/* Buttons: Back & Add Product */}
-  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-    <button
-      onClick={() => navigate(-1)}
-      className="flex items-center gap-2 px-4 py-2.5 text-sm sm:text-base font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-sm transition w-full sm:w-auto justify-center"
-    >
-      <FiArrowLeft className="h-5 w-5" />
-      Back
-    </button>
-
-    <button
-      onClick={() => setAddModalOpen(true)}
-      className="flex items-center gap-2 px-4 py-2.5 text-sm sm:text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition w-full sm:w-auto justify-center"
-    >
-      <FiPlus className="h-5 w-5" />
-      Add Product
-    </button>
-  </div>
-</header>
+        {/* Right Section - Buttons */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-lg shadow-sm hover:bg-white hover:text-gray-900 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <FiArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </button>
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <FiPlus className="h-4 w-4" />
+            <span>Add Product</span>
+          </button>
+        </div>
+      </header>
 
 
       {/* Products Grid */}

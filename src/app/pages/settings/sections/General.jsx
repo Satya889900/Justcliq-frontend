@@ -1,3 +1,304 @@
+// import { useState, useEffect, useRef } from "react";
+// import {
+//   UserIcon,
+//   EnvelopeIcon,
+//   PhoneIcon,
+//   HomeIcon,
+// } from "@heroicons/react/24/outline";
+
+// const General = () => {
+//   const [profile, setProfile] = useState({
+//     firstName: "",
+//     lastName: "",
+//     email: "",
+//     mobileNumber: "",
+//     address: "",
+//     avatar: null,
+//   });
+
+//   const [loading, setLoading] = useState(false);
+//   const [saving, setSaving] = useState(false);
+//   const fileInputRef = useRef(null);
+
+//   // Default user avatar SVG
+//   const DefaultAvatar = () => (
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       className="h-full w-full text-gray-400"
+//       viewBox="0 0 24 24"
+//       fill="currentColor"
+//     >
+//       <path
+//         d="M12 2C6.48 2 2 6.48 2 12s4.48 
+//       10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
+//       3c1.38 0 2.5 1.12 2.5 2.5S13.38 10 
+//       12 10 9.5 8.88 9.5 7.5 10.62 5 
+//       12 5zm0 14.5c-2.73 0-5.26-1.55-6.61-4.04.03-1.63 
+//       2.15-2.96 6.61-2.96 4.46 0 6.58 1.33 
+//       6.61 2.96-1.35 2.49-3.88 4.04-6.61 4.04z"
+//       />
+//     </svg>
+//   );
+// useEffect(() => {
+//   const fetchProfile = async () => {
+//     try {
+//       setLoading(true);
+//       const token = localStorage.getItem("authToken");
+//       const response = await fetch(
+//         `${import.meta.env.VITE_API_BASE_URL}/admin/profile`,
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       if (!response.ok) throw new Error("Failed to fetch profile data.");
+
+//       const result = await response.json();
+
+//       // Map API fields to your state
+//       const apiData = result.data;
+//       setProfile({
+//         firstName: apiData.firstName || "",
+//         lastName: apiData.lastName || "",
+//         email: apiData.email || "",
+//         mobileNumber: apiData.phone || "", // map phone -> mobileNumber
+//         address: apiData.address || "",
+//         avatar: apiData.profileImage || "", // if your API returns avatar, replace here
+//       });
+//     } catch (err) {
+//       console.error("Error fetching profile:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   fetchProfile();
+// }, []);
+
+
+
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setProfile((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleAvatarUpload = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setProfile((prev) => ({ ...prev, avatar: reader.result }));
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//  const handleSave = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       setSaving(true);
+//       const token = localStorage.getItem("authToken");
+
+//       const response = await fetch(
+//         `${import.meta.env.VITE_API_BASE_URL}/admin/profile/update`,
+//         {
+//           method: "PUT",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${token}`,
+//           },
+//           body: JSON.stringify({
+//             firstName: profile.firstName,
+//             lastName: profile.lastName,
+//             email: profile.email,
+//             phone: profile.mobileNumber,
+//             address: profile.address,
+//           }),
+//         }
+//       );
+//        if (!response.ok) throw new Error("Failed to save changes.");
+
+//       alert("✅ Profile updated successfully!");
+//     } catch (err) {
+//       console.error("Save error:", err);
+//       alert("❌ Failed to update profile.");
+//     } finally {
+//       setSaving(false);
+//     }
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="p-6 text-center text-gray-500 animate-pulse">
+//         Loading profile...
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="bg-gray-50 min-h-screen p-6 md:p-10">
+//       <h1 className="text-2xl font-semibold mb-8 text-gray-800">My Profile</h1>
+
+//       {/* Avatar */}
+//       <div className="flex justify-center mb-10">
+//         <div className="relative group">
+//           <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-200 shadow-md">
+//             {profile.avatar ? (
+//               <img
+//                 src={profile.avatar}
+//                 alt="Profile"
+//                 className="w-full h-full object-cover"
+//               />
+//             ) : (
+//               <>
+//               <DefaultAvatar />
+//               </>
+//             )}
+//           </div>
+//           <button
+//             type="button"
+//             onClick={() => fileInputRef.current.click()}
+//             className="absolute bottom-2 right-2 p-2 rounded-full bg-blue-500 text-white shadow-lg 
+//                        hover:bg-blue-600 transition-transform transform hover:scale-105"
+//           >
+//             ✏️
+//           </button>
+//           <input
+//             type="file"
+//             ref={fileInputRef}
+//             onChange={handleAvatarUpload}
+//             className="hidden"
+//             accept="image/*"
+//           />
+//         </div>
+//       </div>
+
+//       {/* Form */}
+//       <form onSubmit={handleSave} className="space-y-6">
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//           {/* First Name */}
+//           <div>
+//             <label className="block text-sm font-medium text-gray-700">
+//               First Name
+//             </label>
+//             <div className="relative mt-1">
+//               <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+//               <input
+//                 type="text"
+//                 name="firstName"
+//                 value={profile.firstName}
+//                 onChange={handleChange}
+//                 placeholder="John"
+//                 className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
+//                            focus:border-blue-500 focus:ring focus:ring-blue-200"
+//               />
+//             </div>
+//           </div>
+//           {/* Last Name */}
+//           <div>
+//             <label className="block text-sm font-medium text-gray-700">
+//               Last Name
+//             </label>
+//             <div className="relative mt-1">
+//               <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+//               <input
+//                 type="text"
+//                 name="lastName"
+//                 value={profile.lastName}
+//                 onChange={handleChange}
+//                 placeholder="Doe"
+//                 className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
+//                            focus:border-blue-500 focus:ring focus:ring-blue-200"
+//               />
+//             </div>
+//           </div>
+//           {/* Email */}
+//           <div className="md:col-span-2">
+//             <label className="block text-sm font-medium text-gray-700">
+//               Email
+//             </label>
+//             <div className="relative mt-1">
+//               <EnvelopeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+//               <input
+//                 type="email"
+//                 name="email"
+//                 value={profile.email}
+//                 onChange={handleChange}
+//                 placeholder="john@gmail.com"
+//                 className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
+//                            focus:border-blue-500 focus:ring focus:ring-blue-200"
+//               />
+//             </div>
+//           </div>
+//           {/* Mobile */}
+//           <div className="md:col-span-2">
+//             <label className="block text-sm font-medium text-gray-700">
+//               Mobile Number
+//             </label>
+//             <div className="relative mt-1">
+//               <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+//               <input
+//                 type="tel"
+//                 name="mobileNumber"
+//                 value={profile.mobileNumber}
+//                 onChange={handleChange}
+//                 placeholder="9876543210"
+//                 className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
+//                            focus:border-blue-500 focus:ring focus:ring-blue-200"
+//               />
+//             </div>
+//           </div>
+//           {/* Address */}
+//           <div className="md:col-span-2">
+//             <label className="block text-sm font-medium text-gray-700">
+//               Address
+//             </label>
+//             <div className="relative mt-1">
+//               <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+//               <input
+//                 type="text"
+//                 name="address"
+//                 value={profile.address}
+//                 onChange={handleChange}
+//                 placeholder="123 Main Street"
+//                 className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
+//                            focus:border-blue-500 focus:ring focus:ring-blue-200"
+//               />
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Buttons */}
+//         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+//           <button
+//             type="button"
+//             className="px-6 py-2 h-12 border border-gray-300 rounded-lg text-gray-700 
+//                        hover:bg-gray-100 transition-colors w-full sm:w-auto"
+//           >
+//             Cancel
+//           </button>
+//           <button
+//             type="submit"
+//             disabled={saving}
+//             className="px-6 py-2 h-12 rounded-lg text-white bg-blue-500 
+//                        hover:bg-blue-600 transition-colors disabled:opacity-50 w-full sm:w-auto"
+//           >
+//             {saving ? "Saving..." : "Save Changes"}
+//           </button>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default General;
+
+
 import { useState, useEffect, useRef } from "react";
 import {
   UserIcon,
@@ -6,23 +307,7 @@ import {
   HomeIcon,
 } from "@heroicons/react/24/outline";
 
-// Default user avatar SVG
-const DefaultAvatar = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-full w-full text-gray-400"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-  >
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 
-      10 10 10 10-4.48 10-10S17.52 2 12 2zm0 
-      3c1.38 0 2.5 1.12 2.5 2.5S13.38 10 
-      12 10 9.5 8.88 9.5 7.5 10.62 5 
-      12 5zm0 14.5c-2.73 0-5.26-1.55-6.61-4.04.03-1.63 
-      2.15-2.96 6.61-2.96 4.46 0 6.58 1.33 
-      6.61 2.96-1.35 2.49-3.88 4.04-6.61 4.04z" />
-  </svg>
-);
+import api, { updateAdminProfile } from "../../api/authApi";
 
 const General = () => {
   const [profile, setProfile] = useState({
@@ -31,95 +316,126 @@ const General = () => {
     email: "",
     mobileNumber: "",
     address: "",
-    avatar: null,
+    avatar: null,          // Cloudinary image URL
+    avatarPreview: null,   // Local preview
+    avatarFile: null,      // File for backend
   });
 
+  const [originalProfile, setOriginalProfile] = useState(null); // ⭐ Stores initial profile
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef(null);
-useEffect(() => {
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("authToken");
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/admin/profile`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to fetch profile data.");
-
-      const result = await response.json();
-
-      // Map API fields to your state
-      const apiData = result.data;
-      setProfile({
-        firstName: apiData.firstName || "",
-        lastName: apiData.lastName || "",
-        email: apiData.email || "",
-        mobileNumber: apiData.phone || "", // map phone -> mobileNumber
-        address: apiData.address || "",
-        avatar: null, // if your API returns avatar, replace here
-      });
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchProfile();
-}, []);
 
 
+  // --------------------------------------------------------
+  // Load profile
+  // --------------------------------------------------------
+  useEffect(() => {
+     const fetchProfile = async () => {
+      try {
+        setLoading(true);
 
+        const res = await api.get("/admin/profile");
+        const data = res.data.data;
 
+        const formatted = {
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          email: data.email || "",
+          mobileNumber: data.phone || "",
+          address: data.address || "",
+          avatar: data.profileImage || null,
+          avatarPreview: null,
+          avatarFile: null,
+        };
+
+        setProfile(formatted);
+        setOriginalProfile(JSON.parse(JSON.stringify(formatted))); // ⭐ save initial version
+      } catch (err) {
+        console.error("Profile load error", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // --------------------------------------------------------
+  // Handle text input
+  // --------------------------------------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
+  // --------------------------------------------------------
+  // Image upload
+  // --------------------------------------------------------
   const handleAvatarUpload = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile((prev) => ({ ...prev, avatar: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setProfile((prev) => ({
+      ...prev,
+      avatarFile: file,
+      avatarPreview: URL.createObjectURL(file),
+    }));
   };
 
+  // --------------------------------------------------------
+  // Save changes
+  // --------------------------------------------------------
   const handleSave = async (e) => {
     e.preventDefault();
+
     try {
       setSaving(true);
-      const response = await fetch("/api/profile/update", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profile),
-      });
-      if (!response.ok) throw new Error("Failed to save changes.");
+
+      const payload = {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phone: profile.mobileNumber,
+        address: profile.address,
+        profileImageFile: profile.avatarFile,
+      };
+
+      const updatedAdmin = await updateAdminProfile(payload);
+
+      const admin = updatedAdmin.data || updatedAdmin;
+
+      setProfile((prev) => ({
+        ...prev,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        mobileNumber: admin.phone,
+        address: admin.address,
+        avatar: admin.profileImage,   // SAVE Cloudinary URL
+        avatarPreview: null,
+        avatarFile: null,
+      }));
+
       alert("✅ Profile updated successfully!");
     } catch (err) {
-      console.error("Save error:", err);
-      alert("❌ Failed to update profile.");
+      alert("❌ Failed to save profile");
+      console.error(err);
     } finally {
       setSaving(false);
     }
   };
+  const handleCancel = () => {
+    if (!originalProfile) return;
+
+    setProfile(JSON.parse(JSON.stringify(originalProfile)));
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   if (loading) {
-    return (
-      <div className="p-6 text-center text-gray-500 animate-pulse">
-        Loading profile...
-      </div>
-    );
+    return <p className="p-6 text-center">Loading...</p>;
   }
 
   return (
@@ -130,24 +446,25 @@ useEffect(() => {
       <div className="flex justify-center mb-10">
         <div className="relative group">
           <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-200 shadow-md">
-            {profile.avatar ? (
-              <img
-                src={profile.avatar}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <DefaultAvatar />
-            )}
+            <img
+              src={
+                profile.avatarPreview
+                  ? profile.avatarPreview
+                  : profile.avatar || "/images/200x200.png"
+              }
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
+
           <button
             type="button"
             onClick={() => fileInputRef.current.click()}
-            className="absolute bottom-2 right-2 p-2 rounded-full bg-blue-500 text-white shadow-lg 
-                       hover:bg-blue-600 transition-transform transform hover:scale-105"
+            className="absolute bottom-2 right-2 p-2 rounded-full bg-blue-500 text-white shadow"
           >
             ✏️
           </button>
+
           <input
             type="file"
             ref={fileInputRef}
@@ -160,117 +477,115 @@ useEffect(() => {
 
       {/* Form */}
       <form onSubmit={handleSave} className="space-y-6">
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
           {/* First Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               First Name
             </label>
             <div className="relative mt-1">
-              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 text-gray-400" />
               <input
                 type="text"
                 name="firstName"
                 value={profile.firstName}
                 onChange={handleChange}
-                placeholder="John"
-                className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
-                           focus:border-blue-500 focus:ring focus:ring-blue-200"
+                className="pl-10 h-12 w-full border rounded-lg"
               />
             </div>
           </div>
+
           {/* Last Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Last Name
             </label>
             <div className="relative mt-1">
-              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 text-gray-400" />
               <input
                 type="text"
                 name="lastName"
                 value={profile.lastName}
                 onChange={handleChange}
-                placeholder="Doe"
-                className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
-                           focus:border-blue-500 focus:ring focus:ring-blue-200"
+                className="pl-10 h-12 w-full border rounded-lg"
               />
             </div>
           </div>
+
           {/* Email */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <div className="relative mt-1">
-              <EnvelopeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <EnvelopeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 text-gray-400" />
               <input
                 type="email"
                 name="email"
                 value={profile.email}
-                onChange={handleChange}
-                placeholder="john@gmail.com"
-                className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
-                           focus:border-blue-500 focus:ring focus:ring-blue-200"
+                disabled
+                className="pl-10 h-12 w-full border rounded-lg bg-gray-100"
               />
             </div>
           </div>
-          {/* Mobile */}
+
+          {/* Mobile Number */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
               Mobile Number
             </label>
             <div className="relative mt-1">
-              <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 text-gray-400" />
               <input
                 type="tel"
                 name="mobileNumber"
                 value={profile.mobileNumber}
                 onChange={handleChange}
-                placeholder="9876543210"
-                className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
-                           focus:border-blue-500 focus:ring focus:ring-blue-200"
+                className="pl-10 h-12 w-full border rounded-lg"
               />
             </div>
           </div>
+
           {/* Address */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
               Address
             </label>
             <div className="relative mt-1">
-              <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 text-gray-400" />
               <input
                 type="text"
                 name="address"
                 value={profile.address}
                 onChange={handleChange}
-                placeholder="123 Main Street"
-                className="pl-10 h-12 block w-full rounded-lg border border-gray-300 shadow-sm 
-                           focus:border-blue-500 focus:ring focus:ring-blue-200"
+                className="pl-10 h-12 w-full border rounded-lg"
               />
             </div>
           </div>
+
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+        <div className="flex justify-between mt-10">
           <button
             type="button"
-            className="px-6 py-2 h-12 border border-gray-300 rounded-lg text-gray-700 
-                       hover:bg-gray-100 transition-colors w-full sm:w-auto"
+            onClick={handleCancel}
+            className="px-6 py-2 border rounded-lg"
           >
             Cancel
           </button>
+
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2 h-12 rounded-lg text-white bg-blue-500 
-                       hover:bg-blue-600 transition-colors disabled:opacity-50 w-full sm:w-auto"
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>
+
       </form>
     </div>
   );

@@ -1,19 +1,14 @@
-
 // Import Dependencies
 import { useEffect, useReducer } from "react";
 
 import PropTypes from "prop-types";
 
-
-
 // Local Imports
 import axios from "utils/axios";
 import { isTokenValid, setSession } from "utils/jwt";
-import { AuthContext} from "./context";
-
+import { AuthContext } from "./context";
 
 // ----------------------------------------------------------------------
-
 
 const initialState = {
   isAuthenticated: false,
@@ -22,9 +17,6 @@ const initialState = {
   errorMessage: null,
   user: null,
 };
-
-
-
 
 const reducerHandlers = {
   INITIALIZE: (state, action) => {
@@ -81,28 +73,32 @@ const reducer = (state, action) => {
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
- 
+
   useEffect(() => {
     const init = async () => {
       try {
         const authToken = window.localStorage.getItem("authToken");
-if (authToken && isTokenValid(authToken)) {
-  setSession(authToken);
-  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/admin/profile`);
-  const { user } = response.data.data;
+        if (authToken && isTokenValid(authToken)) {
+          setSession(authToken);
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/admin/profile`,
+          );
+          const { user } = response.data.data;
 
-  dispatch({
-    type: "INITIALIZE",
-    payload: { isAuthenticated: true, user },
-  });
-} else {
-  setSession(null);
-  dispatch({ type: "INITIALIZE", payload: { isAuthenticated: false, user: null } });
-}
-
+          dispatch({
+            type: "INITIALIZE",
+            payload: { isAuthenticated: true, user },
+          });
+        } else {
+          setSession(null);
+          dispatch({
+            type: "INITIALIZE",
+            payload: { isAuthenticated: false, user: null },
+          });
+        }
       } catch (err) {
-        console.error("Auth init error:",err);
-         setSession(null);
+        console.error("Auth init error:", err);
+        setSession(null);
         dispatch({
           type: "INITIALIZE",
           payload: {
@@ -115,7 +111,7 @@ if (authToken && isTokenValid(authToken)) {
 
     init();
   }, []);
-const login = async ({ user, accessToken }) => {
+  const login = async ({ user, accessToken }) => {
     if (!accessToken || typeof accessToken !== "string" || !user) {
       throw new Error("Invalid token login");
     }
@@ -127,10 +123,6 @@ const login = async ({ user, accessToken }) => {
       payload: { user },
     });
   };
-
-
-
-
 
   const logout = async () => {
     setSession(null);

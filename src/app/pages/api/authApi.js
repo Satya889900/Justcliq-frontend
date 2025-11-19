@@ -1,12 +1,13 @@
 // src/api/authApi.js
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // allow cookies (refreshToken in cookie)
+  withCredentials: true, // ✅ Set to true to allow sending cookies for auth
 });
 
 // attach token to requests
@@ -35,7 +36,7 @@ api.interceptors.response.use(
         const res = await axios.post(
           `${API_BASE_URL}/admin/refresh`,
           {},
-          { withCredentials: true } // send refreshToken cookie
+          { withCredentials: true } // ✅ Set to true to send refreshToken cookie
         );
 
         const { accessToken, refreshToken } = res.data.data;
@@ -51,9 +52,10 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         console.error("Token refresh failed", refreshError);
+        toast.error("Your session has expired. Please log in again.");
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/login"; // redirect
+        window.location.href = "/auth/login"; // redirect to login
       }
     }
 
@@ -65,5 +67,28 @@ export const getCurrentUser = async () => {
   const res = await api.get("/admin/me");
   return res.data;
 };
+// update admin profile (with image support)
+export const updateAdminProfile = async (profileData) => {
+  const formData = new FormData();
+  formData.append("firstName", profileData.firstName);
+  formData.append("lastName", profileData.lastName);
+  formData.append("phone", profileData.phone || "");
+  formData.append("address", profileData.address || "");
+
+  // File upload (only append if user selected new image)
+  if (profileData.profileImageFile) {
+    formData.append("profileImage", profileData.profileImageFile);
+  }
+
+  const res = await api.put("/admin/profile/update", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return res.data;
+};
+
+
 
 export default api;

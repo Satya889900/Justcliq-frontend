@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { FaSearch, FaPlus, FaArrowLeft } from "react-icons/fa";
 import { Navigate, useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { fetchCategoryItems } from "../api/stockApi";
+import { fetchCategoryItems, batchUpdateStock } from "../api/stockApi";
+import ManageStockModal from "./ManageStockModal";
 import Spinner from "../dashboards/components/Spinner";
 
 const isAuthenticated = () => !!localStorage.getItem("authToken");
@@ -43,10 +44,10 @@ const StockManagementThings = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const getItems = async () => {
-      const token = localStorage.getItem("authToken");
+  const getItems = async () => {
+    const token = localStorage.getItem("authToken");
       if (!token) {
         toast.error("Authentication required. Please log in again.");
         setLoading(false);
@@ -61,8 +62,9 @@ const StockManagementThings = () => {
       } finally {
         setLoading(false);
       }
-    };
+  };
 
+  useEffect(() => {
     if (categoryId && type) getItems();
   }, [categoryId, type]);
 
@@ -71,6 +73,34 @@ const StockManagementThings = () => {
   );
 
   const handleBack = () => navigate("/stock-management/stock");
+
+  const handleManageStockClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleSaveStock = async (stockUpdates) => {
+  const token = localStorage.getItem("authToken");
+
+  try {
+    // Convert object → array format required by backend
+    const formattedUpdates = Object.entries(stockUpdates).map(([id, values]) => ({
+      id,
+      ...values,
+    }));
+
+    console.log("📦 Sending to backend:", formattedUpdates);
+
+    await batchUpdateStock(type, formattedUpdates, token);
+
+    toast.success("Stock updated successfully!");
+    setIsModalOpen(false);
+    await getItems(); // Refresh list
+  } catch (error) {
+    console.error("❌ Batch update error:", error);
+    toast.error(error.message || "Could not save stock updates.");
+  }
+};
+
 
   const getStockInfo = (item) => {
     const parts = [];
@@ -118,7 +148,10 @@ const StockManagementThings = () => {
                 />
               </div>
 
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center w-full sm:w-auto">
+              <button 
+                onClick={handleManageStockClick}
+                className="bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center w-full sm:w-auto"
+              >
                 <FaPlus className="mr-2" />
                 <span className="hidden sm:inline">Manage Stocks</span>
                 <span className="sm:hidden">Manage Stocks</span>
@@ -254,6 +287,13 @@ const StockManagementThings = () => {
           </div>
         </div>
       </div>
+      <ManageStockModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        items={filteredItems}
+        type={type}
+        onSave={handleSaveStock}
+      />
     </ProtectedRoute>
   );
 };

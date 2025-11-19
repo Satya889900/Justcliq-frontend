@@ -1,6 +1,7 @@
 /*ServicesPage.jsx*/
 
 import { useState, useEffect ,useCallback} from "react";
+import { WrenchScrewdriverIcon } from "@heroicons/react/24/outline";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiPlus,FiArrowLeft } from "react-icons/fi";
 
@@ -98,34 +99,41 @@ const loadServices = useCallback(async () => {
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-10 bg-gray-50 min-h-screen font-sans">
       {/* Header */}
-      {/* Header */}
-<header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-  {/* Title */}
-  <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 capitalize text-center sm:text-left flex-1">
-    {category?.name || "Category"}
-  </h1>
+      <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+        {/* Left Section - Title */}
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-200/50 shadow-md backdrop-blur-sm">
+            <WrenchScrewdriverIcon className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 capitalize">
+              {category?.name || "Category"}
+            </h1>
+            <p className="text-xs text-gray-600">
+              Manage services in this category
+            </p>
+          </div>
+        </div>
 
-  {/* Buttons */}
-  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-    {/* Back Button */}
-    <button
-      onClick={() => navigate(-1)}
-      className="flex items-center gap-2 px-4 py-2.5 text-sm sm:text-base font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-sm transition w-full sm:w-auto justify-center"
-    >
-      <FiArrowLeft className="h-5 w-5" />
-      Back
-    </button>
+        {/* Right Section - Buttons */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-lg shadow-sm hover:bg-white hover:text-gray-900 hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <FiArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </button>
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="group relative inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <FiPlus className="h-4 w-4" />
+            <span>Add Service</span>
+          </button>
+        </div>
+      </header>
 
-    {/* Add Service Button */}
-    <button
-      onClick={() => setAddModalOpen(true)}
-      className="flex items-center gap-2 px-4 py-2.5 text-sm sm:text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition w-full sm:w-auto justify-center"
-    >
-      <FiPlus className="h-5 w-5" />
-      Add Service
-    </button>
-  </div>
-</header>
 
 
       {/* Services Grid */}

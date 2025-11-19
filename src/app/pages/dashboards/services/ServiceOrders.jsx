@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaFilter, FaSearch, FaCheck, FaTimes, FaSpinner, FaClock, FaEllipsisH, FaExternalLinkAlt } from 'react-icons/fa';
 import { Link, Navigate } from 'react-router-dom';
+import AssignVendorsModal from '../../services/AssignVendorsModal';
+import { toast } from 'react-hot-toast';
 
 // Protected Route Component
 const isAuthenticated = () => {
@@ -29,6 +31,11 @@ const fetchServiceOrders = async () => {
 const ServiceOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [assigning, setAssigning] = useState(false);
+
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const getOrders = async () => {
@@ -38,6 +45,67 @@ const ServiceOrders = () => {
     };
     getOrders();
   }, []);
+
+  const handleAssignClick = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleVendorAssign = async ({ vendorId, bookingId }) => {
+    try {
+      setAssigning(true);
+      const res = await fetch("http://localhost:8000/admin/api/serviceOrder/assign-vendor", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ bookingId, vendorId }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || "Failed to assign");
+
+      toast.success("Vendor assigned successfully");
+      setIsModalOpen(false);
+
+      // reload orders
+      const updated = await fetchServiceOrders(token);
+      setOrders(updated);
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to assign vendor");
+    } finally {
+      setAssigning(false);
+    }
+  };
+
+  const acceptBooking = async (bookingId) => {
+    await fetch("http://localhost:8000/admin/api/serviceOrder/accept", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ bookingId }),
+    });
+    // reload list...
+    const updated = await fetchServiceOrders();
+    setOrders(updated);
+  };
+
+  const rejectBooking = async (bookingId) => {
+    await fetch("http://localhost:8000/admin/api/serviceOrder/reject", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ bookingId }),
+    });
+    // reload list...
+    const updated = await fetchServiceOrders();
+    setOrders(updated);
+  };
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -143,8 +211,22 @@ const ServiceOrders = () => {
                     <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.availedOn}</td>
                     <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.completedOn}</td>
                     <td className="px-4 md:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 font-semibold">
+                      <button
+                        onClick={() => handleAssignClick(order)}
+                        className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 font-semibold mr-2">
                         Assign
+                      </button>
+                      <button
+                        onClick={() => acceptBooking(order.bookingId)}
+                        className="px-3 py-1 text-xs rounded bg-green-600 text-white mr-2"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => rejectBooking(order.bookingId)}
+                        className="px-3 py-1 text-xs rounded bg-red-600 text-white"
+                      >
+                        Reject
                       </button>
                     </td>
                     <td className="px-4 md:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -179,6 +261,14 @@ const ServiceOrders = () => {
           </div>
         </div>
       </div>
+      <AssignVendorsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAssign={handleVendorAssign}
+        bookingId={selectedOrder?.bookingId}
+        serviceName={selectedOrder?.serviceName}
+        token={token}
+      />
     </ProtectedRoute>
   );
 };
