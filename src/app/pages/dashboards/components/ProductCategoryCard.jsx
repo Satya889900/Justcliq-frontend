@@ -7,6 +7,7 @@ const ProductCategoryCard = ({
   imageUrl,
   defaultIcon,
   onClick,
+  status,
   onEdit,
   onDelete,
 }) => {
@@ -61,6 +62,21 @@ const ProductCategoryCard = ({
           ))}
         </div>
       )}
+
+      {status && (
+        <div
+          className={`absolute top-2 right-2 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold shadow-md
+            ${
+              status.toLowerCase() === "active"
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+        >
+          <span className={`h-2 w-2 rounded-full ${status.toLowerCase() === "active" ? "bg-green-500" : "bg-red-500"}`}></span>
+          <span>{status}</span>
+        </div>
+      )}
+
 
       {/* Buttons at bottom */}
       {onEdit && onDelete && (

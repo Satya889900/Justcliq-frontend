@@ -583,6 +583,7 @@ const FeaturedHome = () => {
                     <MdMiscellaneousServices className="text-2xl text-blue-500" />
                   }
 onClick={null}
+                  status={cat.status}
 
                   onEdit={() => openEditModal(cat)}
                   onDelete={() => handleDeleteCategory("services", cat)}
@@ -598,6 +599,7 @@ onClick={null}
                     <MdProductionQuantityLimits className="text-2xl text-green-500" />
                   }
                  
+                  status={cat.status}
                   onEdit={() => openEditModal(cat)}
                   onDelete={() => handleDeleteCategory("products", cat)}
                 />

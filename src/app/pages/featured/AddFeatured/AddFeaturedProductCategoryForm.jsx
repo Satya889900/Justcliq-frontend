@@ -111,7 +111,11 @@ const AddFeaturedProductCategoryForm = ({ onClose, onAdded, initialData }) => {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full bg-gray-50 border px-3 py-3 rounded-lg mt-1"
+            className={`w-full bg-gray-50 border px-3 py-3 rounded-lg mt-1 font-semibold ${
+              status === "Active"
+                ? "text-green-700"
+                : "text-red-700"
+            }`}
           >
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
