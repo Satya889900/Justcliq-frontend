@@ -5,13 +5,15 @@ import { dashboards } from "./dashboards";
 import { productRoutesNavigation } from "./productRoutesNavigation";
 import { serviceRoutesNavigation } from "./serviceRoutesNavigation";
 import { stockRoutesNavigation } from "./stockRoutesNavigation";
+import { featuredRoutesNavigation } from "./featured";
 
 // Main navigation array
 export const navigation = [
   dashboards,
   serviceRoutesNavigation,
   productRoutesNavigation,
-  stockRoutesNavigation, // add Services navigation here
+  stockRoutesNavigation,
+  featuredRoutesNavigation,
 ];
 
 // Re-export base navigation if needed

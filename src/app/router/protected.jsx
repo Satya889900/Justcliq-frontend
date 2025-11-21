@@ -218,6 +218,34 @@ const protectedRoutes = {
         },
       ],
     },
+      {
+      Component: DynamicLayout,
+      children: [
+        {
+          path: "featured",
+          Component: (await import("app/pages/featured/index")).default,
+
+          children: [
+            {
+              // path: "featured/services",
+              // lazy: async () => ({
+              //   Component: (
+              //     await import("app/pages/featured/Featured Home/FeaturedServiceCategoryPage")
+              //   ).default,
+              // }),
+            },
+            // {
+            //   path: "list",
+            //   lazy: async () => ({
+            //     Component: (
+            //       await import("app/pages/services/list/ServiceProviders")
+            //     ).default,
+            //   }),
+            // },
+          ],
+        },
+      ],
+    },
   ],
 };
 

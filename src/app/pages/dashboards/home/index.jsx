@@ -99,13 +99,6 @@ const Home = () => {
   };
   const handleItemDelete = (item) => setDeleteItem(item);
 
-  const handleCategoryClick = (cat) =>
-    navigate(
-      activeTab === "services"
-        ? `/dashboards/services/${cat._id}`
-        : `/dashboards/products/${cat._id}`
-    );
-
   const q = searchQuery.toLowerCase();
 
   const displayItems = categories.reduce((acc, cat) => {
@@ -304,7 +297,7 @@ const Home = () => {
                     role={cat.description}
                     imageUrl={imageUrl}
                     defaultIcon={<MdMiscellaneousServices className="text-2xl text-blue-500" />}
-                    onClick={() => handleCategoryClick(cat)}
+                   
                     onEdit={() => handleCategoryEdit(cat)}
                     onDelete={() => handleCategoryDelete(cat)}
                   />
@@ -316,7 +309,7 @@ const Home = () => {
                     role={cat.description}
                     imageUrl={imageUrl}
                     defaultIcon={<MdProductionQuantityLimits className="text-2xl text-green-500" />}
-                    onClick={() => handleCategoryClick(cat)}
+
                     onEdit={() => handleCategoryEdit(cat)}
                     onDelete={() => handleCategoryDelete(cat)}
                   />
