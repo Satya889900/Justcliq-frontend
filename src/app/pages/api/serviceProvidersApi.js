@@ -7,9 +7,6 @@
 
 // // src/validations/providerAction.validation.js
 
-
-// // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 // // Fetch all service providers
 // // Fetch all service providers
 // export const fetchServiceProviders = async (token) => {
@@ -29,7 +26,6 @@
 //     throw err;
 //   }
 // };
-
 
 // // Update provider action
 // export const updateProviderAction = async (id, action, reason) => {
@@ -52,7 +48,6 @@
 //   reason: Joi.string().allow("").max(200),
 // });
 
-
 // export const getAllServiceProviders = async (token) => {
 //   try {
 //     const res = await axios.get(`${API_BASE}/admin/api/serviceProvider/serviceproviders`, {
@@ -74,7 +69,7 @@
 import Joi from "joi";
 import api from "./authApi"; // centralized axios instance (baseURL + auth)
 import axios from "axios";
-import { API_BASE } from "../../../configs/auth.config";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 🔹 Joi validation schema for provider action
 export const providerActionSchema = Joi.object({
@@ -92,19 +87,21 @@ export const fetchServiceProviders = async (token) => {
 
   try {
     const res = await axios.get(
-      `${API_BASE}/admin/api/serviceProvider/serviceproviders`,
+      `${API_BASE_URL}/admin/api/serviceProvider/serviceproviders`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        },
-      }
+        },    
+      },
     );
 
     return res.data.data || [];
   } catch (err) {
     console.error("Fetch service providers error:", err);
     throw new Error(
-      err.response?.data?.message || err.message || "Failed to load service providers"
+      err.response?.data?.message ||
+        err.message ||
+        "Failed to load service providers",
     );
   }
 };
@@ -122,14 +119,14 @@ export const updateProviderAction = async (serviceId, action, reason) => {
       {
         action,
         reason,
-      }
+      },
     );
     return res.data;
   } catch (err) {
     throw new Error(
       err.response?.data?.message ||
         err.message ||
-        "Failed to update provider action"
+        "Failed to update provider action",
     );
   }
 };
