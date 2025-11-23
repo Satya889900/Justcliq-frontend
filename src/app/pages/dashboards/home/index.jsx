@@ -1,15 +1,18 @@
 /* home/index.jsx */
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { 
-  WrenchScrewdriverIcon, 
-  CubeIcon, 
+import {
+  WrenchScrewdriverIcon,
+  CubeIcon,
   PlusIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
 } from "@heroicons/react/24/outline";
 // import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { MdMiscellaneousServices, MdProductionQuantityLimits } from "react-icons/md";
+import {
+  MdMiscellaneousServices,
+  MdProductionQuantityLimits,
+} from "react-icons/md";
 import { toast } from "react-hot-toast";
 
 import Modal from "../components/Modal";
@@ -56,11 +59,11 @@ const Home = () => {
     try {
       const cats = await fetchCategoriesApi(activeTab);
       const catMap = {};
-      cats.forEach(cat => {
+      cats.forEach((cat) => {
         catMap[cat._id] = cat;
       });
       setCategoriesMap(catMap);
-      
+
       const catsWithSubItems = await Promise.all(
         cats.map(async (cat) => {
           const subItems =
@@ -68,7 +71,7 @@ const Home = () => {
               ? await fetchCategoryServices(cat._id)
               : await fetchProductsByCategory(cat._id);
           return { ...cat, subItems };
-        })
+        }),
       );
       setCategories(catsWithSubItems);
     } catch (err) {
@@ -94,7 +97,11 @@ const Home = () => {
   const handleCategoryDelete = (cat) => setDeleteCategory(cat);
 
   const handleItemEdit = (item, parentCat) => {
-    setEditItem({ ...item, parentCategory: parentCat, categoryId: parentCat?._id || item.categoryId });
+    setEditItem({
+      ...item,
+      parentCategory: parentCat,
+      categoryId: parentCat?._id || item.categoryId,
+    });
     setIsModalOpen(true);
   };
   const handleItemDelete = (item) => setDeleteItem(item);
@@ -120,21 +127,23 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/30">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 -right-32 w-80 h-80 bg-gradient-to-r from-blue-200 to-purple-200 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-32 w-80 h-80 bg-gradient-to-r from-green-200 to-blue-200 rounded-full blur-3xl opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute -top-40 -right-32 h-80 w-80 animate-pulse rounded-full bg-gradient-to-r from-blue-200 to-purple-200 opacity-20 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-32 h-80 w-80 animate-pulse rounded-full bg-gradient-to-r from-green-200 to-blue-200 opacity-20 blur-3xl delay-1000"></div>
       </div>
 
-      <div className="px-4 sm:px-6 lg:px-8 py-6">
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
         {/* Top Navigation Bar */}
         <div className="mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Left Section - Title */}
             <div className="flex items-center gap-3">
-              <div className={`p-3 rounded-xl ${
-                activeTab === "services" 
-                  ? "bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-200/50" 
-                  : "bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-200/50"
-              } shadow-md backdrop-blur-sm`}>
+              <div
+                className={`rounded-xl p-3 ${
+                  activeTab === "services"
+                    ? "border border-blue-200/50 bg-gradient-to-br from-blue-500/10 to-blue-600/10"
+                    : "border border-green-200/50 bg-gradient-to-br from-green-500/10 to-green-600/10"
+                } shadow-md backdrop-blur-sm`}
+              >
                 {activeTab === "services" ? (
                   <WrenchScrewdriverIcon className="h-5 w-5 text-blue-600" />
                 ) : (
@@ -152,20 +161,20 @@ const Home = () => {
             </div>
 
             {/* Right Section - Search and Add Button */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
               {/* Search Bar */}
-              <div className="relative flex-1 min-w-[240px]">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-lg blur-sm"></div>
+              <div className="relative min-w-[240px] flex-1">
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500/5 to-purple-500/5 blur-sm"></div>
                 <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={`Search ${activeTab}...`}
-                    className="w-full pl-9 pr-9 py-2 bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 placeholder-gray-400 text-xs hover:shadow focus:shadow-md"
+                    className="w-full rounded-lg border border-gray-200/60 bg-white/90 py-2 pr-9 pl-9 text-xs placeholder-gray-400 shadow-sm backdrop-blur-sm transition-all duration-200 outline-none hover:shadow focus:border-blue-500 focus:shadow-md focus:ring-2 focus:ring-blue-500"
                   />
-                  <button className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors duration-200">
+                  <button className="absolute top-1/2 right-2 -translate-y-1/2 transform rounded-md bg-gray-100 p-1 text-gray-600 transition-colors duration-200 hover:bg-gray-200">
                     <FunnelIcon className="h-3 w-3" />
                   </button>
                 </div>
@@ -178,10 +187,10 @@ const Home = () => {
                   setEditItem(null);
                   setIsModalOpen(true);
                 }}
-                className="group relative inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 hover:from-blue-700 hover:to-indigo-800 min-w-[120px] overflow-hidden"
+                className="group relative inline-flex min-w-[120px] transform items-center justify-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-indigo-700 px-3 py-2 text-xs font-semibold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:from-blue-700 hover:to-indigo-800 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                <PlusIcon className="h-3 w-3 relative z-10" />
+                <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></div>
+                <PlusIcon className="relative z-10 h-3 w-3" />
                 <span className="relative z-10">Add Category</span>
               </button>
             </div>
@@ -190,18 +199,18 @@ const Home = () => {
 
         {/* Tabs and Stats Bar */}
         <div className="mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {/* Tabs */}
             <div className="flex gap-2">
               {[
-                { 
-                  key: "services", 
+                {
+                  key: "services",
                   icon: <WrenchScrewdriverIcon className="h-4 w-4" />,
                   label: "Services",
                   gradient: "from-blue-500 to-blue-600",
                 },
-                { 
-                  key: "products", 
+                {
+                  key: "products",
                   icon: <CubeIcon className="h-4 w-4" />,
                   label: "Products",
                   gradient: "from-green-500 to-green-600",
@@ -210,11 +219,12 @@ const Home = () => {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`group flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 ${
+                  className={`group flex transform items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 ${
                     activeTab === tab.key
-                      ? `text-white bg-gradient-to-r ${tab.gradient} shadow-md`
-                      : "text-gray-600 bg-white/80 backdrop-blur-sm border border-gray-200/60 hover:bg-white hover:text-gray-900 hover:shadow-sm"
-                  }`}x
+                      ? `bg-gradient-to-r text-white ${tab.gradient} shadow-md`
+                      : "border border-gray-200/60 bg-white/80 text-gray-600 backdrop-blur-sm hover:bg-white hover:text-gray-900 hover:shadow-sm"
+                  }`}
+                  x
                 >
                   {tab.icon}
                   {tab.label}
@@ -225,7 +235,7 @@ const Home = () => {
             {/* Stats */}
             <div className="flex items-center gap-4">
               {searchQuery && (
-                <div className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                <div className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
                   <span>Search:</span>
                   <span className="font-medium">&quot;{searchQuery}&quot;</span>
                 </div>
@@ -236,41 +246,45 @@ const Home = () => {
 
         {/* Content Grid */}
         {loading ? (
-          <div className="flex justify-center items-center py-16">
+          <div className="flex items-center justify-center py-16">
             <div className="text-center">
               <div className="relative">
                 <Spinner size="medium" color="primary" />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-lg"></div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-lg"></div>
               </div>
-              <p className="mt-3 text-sm text-gray-600 font-medium">
+              <p className="mt-3 text-sm font-medium text-gray-600">
                 Loading your {activeTab}...
               </p>
             </div>
           </div>
         ) : displayItems.length === 0 ? (
-          <div className="text-center py-12 bg-white/60 backdrop-blur-sm rounded-xl border border-dashed border-gray-300/60 shadow-md hover:shadow-lg transition-all duration-300">
-            <div className="max-w-sm mx-auto">
-              <div className={`p-3 rounded-xl inline-flex mb-3 bg-gradient-to-br ${
-                activeTab === "services" 
-                  ? "from-blue-100 to-blue-200 text-blue-600" 
-                  : "from-green-100 to-green-200 text-green-600"
-              } shadow-sm`}>
+          <div className="rounded-xl border border-dashed border-gray-300/60 bg-white/60 py-12 text-center shadow-md backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+            <div className="mx-auto max-w-sm">
+              <div
+                className={`mb-3 inline-flex rounded-xl bg-gradient-to-br p-3 ${
+                  activeTab === "services"
+                    ? "from-blue-100 to-blue-200 text-blue-600"
+                    : "from-green-100 to-green-200 text-green-600"
+                } shadow-sm`}
+              >
                 {activeTab === "services" ? (
                   <WrenchScrewdriverIcon className="h-8 w-8" />
                 ) : (
                   <CubeIcon className="h-8 w-8" />
                 )}
               </div>
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
+              <h3 className="mb-1 text-base font-semibold text-gray-900">
                 No {activeTab} found
               </h3>
-              <p className="text-gray-600 mb-4 text-xs">
-                {searchQuery ? `No results found for &quot;${searchQuery}&quot;` : `Start by creating your first ${activeTab.slice(0, -1)} category`}
+              <p className="mb-4 text-xs text-gray-600">
+                {searchQuery
+                  ? `No results found for &quot;${searchQuery}&quot;`
+                  : `Start by creating your first ${activeTab.slice(0, -1)} category`}
               </p>
               {!searchQuery && (
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="group inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                  className="group inline-flex transform items-center gap-1 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-700 px-3 py-1.5 text-xs font-semibold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                 >
                   <PlusIcon className="h-3 w-3" />
                   Create First Category
@@ -279,7 +293,7 @@ const Home = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {displayItems.map((itemBlock) => {
               if (itemBlock.type === "category") {
                 const cat = itemBlock.data[0];
@@ -296,8 +310,12 @@ const Home = () => {
                     user={cat.name}
                     role={cat.description}
                     imageUrl={imageUrl}
-                    defaultIcon={<MdMiscellaneousServices className="text-2xl text-blue-500" />}
-                   
+                    defaultIcon={
+                      <MdMiscellaneousServices className="text-2xl text-blue-500" />
+                    }
+                    onClick={() =>
+                      navigate(`/dashboards/services/${cat._id}`)
+                    }
                     onEdit={() => handleCategoryEdit(cat)}
                     onDelete={() => handleCategoryDelete(cat)}
                   />
@@ -308,8 +326,12 @@ const Home = () => {
                     user={cat.name}
                     role={cat.description}
                     imageUrl={imageUrl}
-                    defaultIcon={<MdProductionQuantityLimits className="text-2xl text-green-500" />}
-
+                    defaultIcon={
+                      <MdProductionQuantityLimits className="text-2xl text-green-500" />
+                    }
+                                        onClick={() =>
+                      navigate(`/dashboards/products/${cat._id}`)
+                    }
                     onEdit={() => handleCategoryEdit(cat)}
                     onDelete={() => handleCategoryDelete(cat)}
                   />
@@ -320,7 +342,8 @@ const Home = () => {
                 return itemBlock.data.map((sub) => {
                   const categoryName =
                     activeTab === "services"
-                      ? categoriesMap[sub.categoryId]?.name || "Unknown Category"
+                      ? categoriesMap[sub.categoryId]?.name ||
+                        "Unknown Category"
                       : sub.category?.name || "Unknown Category";
 
                   return activeTab === "services" ? (
@@ -329,7 +352,9 @@ const Home = () => {
                       service={sub}
                       apiBaseUrl={API_BASE_URL}
                       categoryName={categoryName}
-                      onClick={() => navigate(`/dashboards/services/${sub.categoryId}`)}
+                      onClick={() =>
+                        navigate(`/dashboards/services/${sub.categoryId}`)
+                      }
                       onEdit={() => handleItemEdit(sub)}
                       onDelete={() => handleItemDelete(sub)}
                     />
@@ -339,7 +364,9 @@ const Home = () => {
                       product={sub}
                       apiBaseUrl={API_BASE_URL}
                       categoryName={categoryName}
-                      onClick={() => navigate(`/dashboards/products/${sub.categoryId}`)}
+                      onClick={() =>
+                        navigate(`/dashboards/products/${sub.categoryId}`)
+                      }
                       onEdit={() => handleItemEdit(sub, itemBlock.parent)}
                       onDelete={() => handleItemDelete(sub)}
                     />
@@ -389,9 +416,15 @@ const Home = () => {
             />
           )
         ) : activeTab === "services" ? (
-          <AddServiceForm onClose={() => setIsModalOpen(false)} onServiceAdded={refreshCategories} />
+          <AddServiceForm
+            onClose={() => setIsModalOpen(false)}
+            onServiceAdded={refreshCategories}
+          />
         ) : (
-          <AddProductForm onClose={() => setIsModalOpen(false)} onProductAdded={refreshCategories} />
+          <AddProductForm
+            onClose={() => setIsModalOpen(false)}
+            onProductAdded={refreshCategories}
+          />
         )}
       </Modal>
 
