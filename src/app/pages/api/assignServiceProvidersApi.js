@@ -39,23 +39,34 @@ const assignVendorSchema = Joi.object({
 });
 
 // ✅ Fetch service providers by service name
-export const fetchServiceProvidersByName = async (serviceName) => {
-  // Validate input before sending request
+export const fetchServiceProvidersByName = async (serviceName, token) => {
   const { error } = serviceNameSchema.validate(serviceName);
   if (error) throw new Error(error.details[0].message);
 
   try {
     const encodedName = encodeURIComponent(serviceName);
+
     const res = await api.get(
-      `/admin/api/serviceProvider/service-providers/by-name/${encodedName}`
+      `/admin/api/serviceProvider/service-providers/by-name/${encodedName}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+
     return res.data.data || [];
   } catch (err) {
     throw new Error(
-      err.response?.data?.message || err.message || "Failed to fetch service providers"
+      err.response?.data?.message ||
+      err.message ||
+      "Failed to fetch service providers"
     );
   }
 };
+
+
+
 
 // ✅ Assign vendor to booking with validation
 export const assignVendorToBooking = async (bookingId, vendorId) => {

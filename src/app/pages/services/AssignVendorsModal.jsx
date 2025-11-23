@@ -44,80 +44,25 @@
 // };
 
 // export default AssignVendorsModal;
+// src/app/pages/services/AssignVendorsModal.jsx
+import { FaTimes } from "react-icons/fa";
 
-
-import { useEffect, useState } from "react";
-import { FaTimes, FaSpinner, FaUserCircle } from "react-icons/fa";
-
-const AssignVendorsModal = ({ isOpen, onClose, onAssign, bookingId, serviceName, token }) => {
-  const [vendors, setVendors] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const fetchVendors = async () => {
-      try {
-        const res = await fetch("http://localhost:8000/admin/api/serviceProvider", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const json = await res.json();
-        setVendors(json.data || []);
-      } catch (err) {
-        console.error("Error loading vendors:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    setLoading(true);
-    fetchVendors();
-  }, [isOpen, token]);
-
+const AssignVendorsModal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg">
         <div className="flex justify-between items-center border-b pb-3 mb-3">
-          <h2 className="text-xl font-bold text-gray-800">
-            Assign Vendor for <span className="text-indigo-600">{serviceName}</span>
-          </h2>
+          <h2 className="text-xl font-bold text-gray-800">Assign Vendor</h2>
+
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <FaTimes size={22} />
           </button>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-10 text-gray-600">
-            <FaSpinner className="animate-spin mr-2" /> Loading vendors...
-          </div>
-        ) : (
-          <div className="max-h-80 overflow-y-auto">
-            {vendors.map((v) => (
-              <div
-                key={v._id}
-                className="flex items-center justify-between px-3 py-2 border-b hover:bg-gray-50"
-              >
-                <div className="flex items-center gap-2">
-                  <FaUserCircle className="text-2xl text-gray-400" />
-                  <div>
-                    <div className="font-semibold text-gray-800">
-                      {v.userId?.firstName} {v.userId?.lastName}
-                    </div>
-                    <div className="text-xs text-gray-500">{v.userId?.phone}</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => onAssign({ vendorId: v.userId._id, bookingId })}
-                  className="px-3 py-1 rounded bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700"
-                >
-                  Assign
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Content from AssignServiceVendors will be inserted here */}
+        {children}
       </div>
     </div>
   );

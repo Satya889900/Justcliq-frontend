@@ -1,3 +1,4 @@
+// src/app/pages/services/ServiceProviders.jsx
 import { useState, useEffect } from "react";
 import {
   FaCheckCircle,
@@ -16,16 +17,53 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../dashboards/components/Spinner";
 
+// 🔹 Helper for action badge colors
+const getActionBgColor = (action) => {
+  switch (action) {
+    case "Approved":
+      return "bg-green-100 text-green-800";
+    case "Disapproved":
+      return "bg-red-100 text-red-800";
+    case "Suspended":
+      return "bg-yellow-100 text-yellow-800";
+    case "Pending":
+    default:
+      return "bg-blue-100 text-blue-800";
+  }
+};
+
+// 🔹 Helper for action icons
+const getActionIcon = (action) => {
+  switch (action) {
+    case "Approved":
+      return <FaCheckCircle className="text-green-600" />;
+    case "Disapproved":
+      return <FaTimesCircle className="text-red-500" />;
+    case "Suspended":
+      return <FaBan className="text-yellow-600" />;
+    default:
+      return null;
+  }
+};
+
 const ServiceProviders = () => {
   const [providers, setProviders] = useState([]);
   const [filteredProviders, setFilteredProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // 🔥 Load providers from backend
   useEffect(() => {
     const getProviders = async () => {
       try {
-        const data = await fetchServiceProviders();
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          toast.error("Session expired. Please login again.");
+          setLoading(false);
+          return;
+        }
+
+        const data = await fetchServiceProviders(token);
         setProviders(data);
         setFilteredProviders(data);
       } catch (err) {
@@ -35,6 +73,7 @@ const ServiceProviders = () => {
         setLoading(false);
       }
     };
+
     getProviders();
   }, []);
 
@@ -49,33 +88,7 @@ const ServiceProviders = () => {
     setFilteredProviders(filtered);
   }, [searchTerm, providers]);
 
-  const getActionBgColor = (action) => {
-    switch (action) {
-      case "Approved":
-        return "bg-green-100 text-green-800";
-      case "Disapproved":
-        return "bg-red-100 text-red-800";
-      case "Suspended":
-        return "bg-yellow-100 text-yellow-800";
-      case "Pending":
-      default:
-        return "bg-blue-100 text-blue-800";
-    }
-  };
-
-  const getActionIcon = (action) => {
-    switch (action) {
-      case "Approved":
-        return <FaCheckCircle className="text-green-600" />;
-      case "Disapproved":
-        return <FaTimesCircle className="text-red-500" />;
-      case "Suspended":
-        return <FaBan className="text-yellow-600" />;
-      default:
-        return null;
-    }
-  };
-
+  // 🔹 Change action in local state
   const handleActionChange = (e, id) => {
     const newAction = e.target.value;
     setProviders((prev) =>
@@ -83,14 +96,18 @@ const ServiceProviders = () => {
     );
   };
 
+  // 🔹 Change reason in local state
   const handleReasonChange = (id, value) => {
     setProviders((prev) =>
       prev.map((p) => (p._id === id ? { ...p, reason: value } : p))
     );
   };
 
+  // 🔹 Submit update to backend
   const handleSubmit = async (id) => {
     const provider = providers.find((p) => p._id === id);
+    if (!provider) return;
+
     const reason = provider.reason?.trim() || "Updated by admin";
 
     const { error } = providerActionSchema.validate({
@@ -151,8 +168,18 @@ const ServiceProviders = () => {
               <table className="min-w-full leading-normal">
                 <thead>
                   <tr className="bg-blue-100 text-blue-800 uppercase text-sm font-semibold">
-                    {["Name", "Service Type", "Cost", "Action", "Reason", "Submit"].map((col) => (
-                      <th key={col} className="py-3 px-4 text-left whitespace-nowrap">
+                    {[
+                      "Name",
+                      "Service Type",
+                      "Cost",
+                      "Action",
+                      "Reason",
+                      "Submit",
+                    ].map((col) => (
+                      <th
+                        key={col}
+                        className="py-3 px-4 text-left whitespace-nowrap"
+                      >
                         {col}
                       </th>
                     ))}
@@ -162,7 +189,9 @@ const ServiceProviders = () => {
                   {filteredProviders.map((p, i) => (
                     <tr
                       key={p._id}
-                      className={`border-b ${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-blue-50 transition`}
+                      className={`border-b ${
+                        i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      } hover:bg-blue-50 transition`}
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
@@ -176,8 +205,13 @@ const ServiceProviders = () => {
                           <span className="font-medium">{p.name}</span>
                         </div>
                       </td>
+
                       <td className="py-3 px-4">{p.serviceType}</td>
-                      <td className="py-3 px-4 font-semibold whitespace-nowrap">₹{p.cost}</td>
+
+                      <td className="py-3 px-4 font-semibold whitespace-nowrap">
+                        ₹{p.cost}
+                      </td>
+
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           {getActionIcon(p.action)}
@@ -195,15 +229,19 @@ const ServiceProviders = () => {
                           </select>
                         </div>
                       </td>
+
                       <td className="py-3 px-4">
                         <textarea
                           value={p.reason || ""}
                           rows={2}
                           placeholder="Provide reason"
-                          onChange={(e) => handleReasonChange(p._id, e.target.value)}
+                          onChange={(e) =>
+                            handleReasonChange(p._id, e.target.value)
+                          }
                           className="w-full p-1 border border-gray-300 rounded-md text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </td>
+
                       <td className="py-3 px-4">
                         <button
                           onClick={() => handleSubmit(p._id)}
@@ -234,13 +272,19 @@ const ServiceProviders = () => {
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       )}
-                      <span className="font-semibold text-gray-800">{p.name}</span>
+                      <span className="font-semibold text-gray-800">
+                        {p.name}
+                      </span>
                     </div>
                     {getActionIcon(p.action)}
                   </div>
 
-                  <p className="text-sm text-gray-600">Service: {p.serviceType}</p>
-                  <p className="text-sm text-gray-600 font-semibold">Cost: ₹{p.cost}</p>
+                  <p className="text-sm text-gray-600">
+                    Service: {p.serviceType}
+                  </p>
+                  <p className="text-sm text-gray-600 font-semibold">
+                    Cost: ₹{p.cost}
+                  </p>
 
                   <div className="mt-3 space-y-2">
                     <select
@@ -260,7 +304,9 @@ const ServiceProviders = () => {
                       value={p.reason || ""}
                       rows={2}
                       placeholder="Provide reason"
-                      onChange={(e) => handleReasonChange(p._id, e.target.value)}
+                      onChange={(e) =>
+                        handleReasonChange(p._id, e.target.value)
+                      }
                       className="w-full px-2 py-1 border border-gray-300 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
